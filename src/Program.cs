@@ -1,26 +1,35 @@
- 
+
+using Microsoft.AspNetCore.Identity;
+using System;
+
 var builder = WebApplication.CreateBuilder(args);
 {
-    builder.Services.AddAuthentication("cookie")
-        .AddCookie("cookie", o =>
-        {
-            o.LoginPath = "/login";
-            o.LogoutPath = "/logout";
+    //
+    builder.Services.AddAuthorization();
 
-        });
+    // Add EF Core
+    builder.Services.AddDbContext<IdentitiesDbContext>(options =>
+        options.UseInMemoryDatabase("devblogs_inmemory_db"));
+
+    builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+                        .AddEntityFrameworkStores<IdentitiesDbContext>();
 }
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthorization();
-
+ 
 var app = builder.Build();
 {
-    app.UseHttpsRedirection();
-    app.UseAuthorization();
+    app.MapGroup("/Identity")
+            .MapIdentityApi<IdentityUser>();
 }
 
-app.MapGet("/login", Getlogin.Handler);
-app.MapPost("/login", Login.Handler);
-app.MapGet("/oauth/authorize", AuthorizationEndpoint.Handler).RequireAuthorization();
-app.MapPost("/oauth/token", TokenEndpoint.Handler);
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.Run();

@@ -1,10 +1,11 @@
-﻿using System.Security.Cryptography;
+﻿using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
 
 namespace Devblogs.IdentitiesProvider.Providers
 {
     public class DevelopmentKeyProvider
     {
-        public DevelopmentKeys(
+        public DevelopmentKeyProvider(
            IWebHostEnvironment env
 
            )
@@ -28,4 +29,4 @@ namespace Devblogs.IdentitiesProvider.Providers
         public RsaSecurityKey RsaSecurityKey => new RsaSecurityKey(RsaKey);
     }
 }
-}
+ 
